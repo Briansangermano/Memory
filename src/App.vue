@@ -2,18 +2,19 @@
   <div id="app">
     <div class="TimesContainer">
       <section>
-        <input type="radio" v-model="timeIndex" :value="0" class="ButtonTime">14Hrs
-        <input type="radio" v-model="timeIndex" :value="1" class="ButtonTime">16Hrs
-        <input type="radio" v-model="timeIndex" :value="2" class="ButtonTime">20Hrs
-        <input type="radio" v-model="timeIndex" :value="3" class="ButtonTime">23Hrs
+        <input type="radio" v-model="timeIndex" :value="0" class="form-check-input">14Hrs
+        <input type="radio" v-model="timeIndex" :value="1" class="form-check-input">16Hrs
+        <input type="radio" v-model="timeIndex" :value="2" class="form-check-input">20Hrs
+        <input type="radio" v-model="timeIndex" :value="3" class="form-check-input">23Hrs
       </section>
+      <button @click="reset" class="btn btn-primary ResetButton">Reset</button>
     </div>
     <div class="Container">
       <div class="SalasContainer" v-for="(sala, indexSala) in data[0][1]" :key="indexSala">
-        <p>Sala {{indexSala}}</p>
+        <span class="badge bg-secondary">Sala {{indexSala}}</span>
         <div class="ColumsContainer" v-for="(row, indexRow) in data" :key="indexRow">
           <div class="RowsContainer" v-for="(colums, indexColums) in data[indexRow]" :key="indexColums">
-            <button :disabled="data[indexColums][indexRow][indexSala][timeIndex]" @click="savePlace({timeIndex, indexSala, indexRow, indexColums})">
+            <button :class="data[indexColums][indexRow][indexSala][timeIndex] ? 'btn btn-danger' : 'btn btn-success'" @click="savePlace({timeIndex, indexSala, indexRow, indexColums})">
               {{"C" + indexColums + "-" + "F" + indexRow}}
             </button>
           </div>
@@ -37,8 +38,20 @@ export default {
 
   methods: {
     savePlace(value) {
-      this.data[value.indexColums][value.indexRow][value.indexSala][value.timeIndex] = true;
-    }
+      const place = this.data[value.indexColums][value.indexRow][value.indexSala];
+      this.$set(place, value.timeIndex, !place[value.timeIndex]);
+    },
+    reset() {
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+          for (let f = 0; f < 5; f++) {
+            for (let g = 0; g < 4; g++) {
+              this.$set(this.data[i][j][f], g, false);
+            }
+          }
+        }
+      }
+    },
   },
 }
 </script>
@@ -55,6 +68,11 @@ export default {
 
   .ColumsContainer {
     display: flex;
+    margin: 2px;
+  }
+
+  .RowsContainer {
+     margin: 2px;
   }
 
   .SalasContainer {
@@ -70,10 +88,25 @@ export default {
   .TimesContainer {
     display: flex;
     justify-content: center;
+    align-items: center;
   }
 
-  .ButtonTime {
+  section {
+    display: flex;
+    align-items: center;
+  }
+
+  .form-check-input {
     margin: 10px;
     padding: 5px;
+  }
+
+  .ResetButton {
+    margin-left: 40px;
+  }
+
+  .badge {
+    font-size: 1.25em;
+    margin-bottom: 10px;
   }
 </style>
